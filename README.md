@@ -26,14 +26,15 @@ This repo handles the Data Engineering side of the app:
 - `chunk_text.py` — splits extracted text into overlapping chunks
 
 ## How to run
+```
 pip install python-docx pdfplumber openpyxl
 python extract_text.py
-
-
-## Notes
-This pipeline is designed to be invoked as a script/job when a document is submitted, not run as a long-lived service.
+```
 
 ## Dependencies (waiting on)
 - AI team: embedding model/API choice + format for masked text handoff
 - Backend: document storage location + access method
 - DevOps: pgvector/Postgres connection details
+
+## Notes
+This pipeline is designed to be invoked as a script/job when a document is submitted, not run as a long-lived service.
