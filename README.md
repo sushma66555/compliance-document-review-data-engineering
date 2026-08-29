@@ -32,3 +32,8 @@ python extract_text.py
 
 ## Notes
 This pipeline is designed to be invoked as a script/job when a document is submitted, not run as a long-lived service.
+
+## Dependencies (waiting on)
+- AI team: embedding model/API choice + format for masked text handoff
+- Backend: document storage location + access method
+- DevOps: pgvector/Postgres connection details
