@@ -12,8 +12,8 @@ This repo handles the Data Engineering side of the app:
 ## Current status
 - [x] Text extraction (PDF, DOCX, XLSX)
 - [x] Chunking with overlap
-- [ ] Embedding pipeline
-- [ ] Vector storage schema
+- [x] Embedding pipeline (sentence-transformers, 384 dimensions)
+- [x] Vector storage working end-to-end (extraction -> chunking -> embedding -> Postgres/pgvector)
 - [ ] Rule retrieval job
 - [ ] Disclosure-by-absence job
 - [ ] Precedent search job
@@ -24,17 +24,26 @@ This repo handles the Data Engineering side of the app:
 - `extract_pdf.py` — extracts text from PDF files
 - `extract_xlsx.py` — extracts text from XLSX files
 - `chunk_text.py` — splits extracted text into overlapping chunks
+- `embed_text.py` — generates embeddings from text using sentence-transformers
+- `store_embeddings.py` — full pipeline: extract, chunk, embed, and insert into Postgres (document_chunks table)
 
 ## How to run
 ```
-pip install python-docx pdfplumber openpyxl
-python extract_text.py
+pip install python-docx pdfplumber openpyxl sentence-transformers psycopg2-binary
+python store_embeddings.py
 ```
+Requires the platform repo's Postgres + pgvector database running (see compliance-document-review-platform).
+
+## Database schema
+`document_chunks` table:
+- `id` SERIAL PRIMARY KEY
+- `chunk_text` TEXT
+- `embedding` vector(384)
 
 ## Dependencies (waiting on)
-- AI team: embedding model/API choice + format for masked text handoff
+- AI team: confirmed masked-text format (document_id, chunk_id, masked_text); embedding model still being finalized
 - Backend: document storage location + access method
-- DevOps: pgvector/Postgres connection details
+- DevOps: pgvector/Postgres access confirmed and working
 
 ## Notes
 This pipeline is designed to be invoked as a script/job when a document is submitted, not run as a long-lived service.
