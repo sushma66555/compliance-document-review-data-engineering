@@ -14,7 +14,7 @@ This repo handles the Data Engineering side of the app:
 - [x] Chunking with overlap
 - [x] Embedding pipeline (sentence-transformers, 384 dimensions)
 - [x] Vector storage working end-to-end (extraction -> chunking -> embedding -> Postgres/pgvector)
-- [ ] Rule retrieval job
+- [x] Rule lookup job (working, tested)
 - [ ] Disclosure-by-absence job
 - [ ] Precedent search job
 - [ ] Retrieval tuning
@@ -24,13 +24,18 @@ This repo handles the Data Engineering side of the app:
 - `extract_pdf.py` — extracts text from PDF files
 - `extract_xlsx.py` — extracts text from XLSX files
 - `chunk_text.py` — splits extracted text into overlapping chunks
-- `embed_text.py` — generates embeddings from text using sentence-transformers
+- `embed_text.py` — quick test script for generating embeddings
 - `store_embeddings.py` — full pipeline: extract, chunk, embed, and insert into Postgres (document_chunks table)
+- `seed_rules.py` — seeds the rules table with sample compliance rules and their embeddings
+- `rule_lookup.py` — reusable function that finds the top matching rules for a given document chunk
+- `test_rule_lookup.py` — standalone test for the similarity search query
 
 ## How to run
 ```
 pip install python-docx pdfplumber openpyxl sentence-transformers psycopg2-binary
 python store_embeddings.py
+python seed_rules.py
+python rule_lookup.py
 ```
 Requires the platform repo's Postgres + pgvector database running (see compliance-document-review-platform).
 
@@ -40,9 +45,18 @@ Requires the platform repo's Postgres + pgvector database running (see complianc
 - `chunk_text` TEXT
 - `embedding` vector(384)
 
+`rules` table:
+- `id` SERIAL PRIMARY KEY
+- `rule_id` TEXT
+- `rule_text` TEXT
+- `embedding` vector(384)
+
+## Retrieval response format
+Rule lookup: `{ rule_id: string, rule_text: string, similarity_score: float }`
+
 ## Dependencies (waiting on)
 - AI team: confirmed masked-text format (document_id, chunk_id, masked_text); embedding model still being finalized
-- Backend: document storage location + access method
+- Backend: file-storage/access contract in progress (Data Engineering will retrieve stored files and run its own extraction pipeline)
 - DevOps: pgvector/Postgres access confirmed and working
 
 ## Notes
