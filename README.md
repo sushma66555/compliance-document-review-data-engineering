@@ -55,8 +55,8 @@ Requires the platform repo's Postgres + pgvector database running (see complianc
 Rule lookup: `{ rule_id: string, rule_text: string, similarity_score: float }`
 
 ## Dependencies (waiting on)
-- AI team: confirmed masked-text format (document_id, chunk_id, masked_text); embedding model still being finalized
-- Backend: file-storage/access contract in progress (Data Engineering will retrieve stored files and run its own extraction pipeline)
+- AI team: embedding model confirmed (sentence-transformers, all-MiniLM-L6-v2, 384 dims) — AI to align their implementation
+- Backend: file-access endpoint built (GET /documents/{document_id}/file) — auth method (API key) suggested, pending final confirmation
 - DevOps: pgvector/Postgres access confirmed and working
 
 ## Notes
