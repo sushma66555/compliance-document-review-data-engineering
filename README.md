@@ -15,7 +15,7 @@ This repo handles the Data Engineering side of the app:
 - [x] Embedding pipeline (sentence-transformers, 384 dimensions)
 - [x] Vector storage working end-to-end (extraction -> chunking -> embedding -> Postgres/pgvector)
 - [x] Rule lookup job (working, tested)
-- [ ] Disclosure-by-absence job
+- [x] Disclosure-by-absence job
 - [ ] Precedent search job
 - [ ] Retrieval tuning
 
@@ -29,6 +29,7 @@ This repo handles the Data Engineering side of the app:
 - `seed_rules.py` — seeds the rules table with sample compliance rules and their embeddings
 - `rule_lookup.py` — reusable function that finds the top matching rules for a given document chunk
 - `test_rule_lookup.py` — standalone test for the similarity search query
+- `disclosure_check.py` — checks whether a required disclosure is present or missing in a document's chunks
 
 ## How to run
 ```
@@ -53,6 +54,7 @@ Requires the platform repo's Postgres + pgvector database running (see complianc
 
 ## Retrieval response format
 Rule lookup: `{ rule_id: string, rule_text: string, similarity_score: float }`
+Disclosure-by-absence: `{ disclosure_id: string, disclosure_type: string, present: boolean, similarity_score: float, matched_chunk_id: string | null }`
 
 ## Dependencies (waiting on)
 - AI team: embedding model confirmed (sentence-transformers, all-MiniLM-L6-v2, 384 dims) — AI to align their implementation
