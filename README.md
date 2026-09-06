@@ -16,7 +16,7 @@ This repo handles the Data Engineering side of the app:
 - [x] Vector storage working end-to-end (extraction -> chunking -> embedding -> Postgres/pgvector)
 - [x] Rule lookup job (working, tested)
 - [x] Disclosure-by-absence job
-- [ ] Precedent search job
+- [x] Precedent search job
 - [ ] Retrieval tuning
 
 ## Files
@@ -30,6 +30,7 @@ This repo handles the Data Engineering side of the app:
 - `rule_lookup.py` — reusable function that finds the top matching rules for a given document chunk
 - `test_rule_lookup.py` — standalone test for the similarity search query
 - `disclosure_check.py` — checks whether a required disclosure is present or missing in a document's chunks
+- `precedent_search.py` — finds the most similar previously-reviewed chunks for a given query
 
 ## How to run
 ```
@@ -55,6 +56,7 @@ Requires the platform repo's Postgres + pgvector database running (see complianc
 ## Retrieval response format
 Rule lookup: `{ rule_id: string, rule_text: string, similarity_score: float }`
 Disclosure-by-absence: `{ disclosure_id: string, disclosure_type: string, present: boolean, similarity_score: float, matched_chunk_id: string | null }`
+Precedent match: `{ document_id: string, chunk_id: string, similarity_score: float, chunk_text: string }`
 
 ## Dependencies (waiting on)
 - AI team: embedding model confirmed (sentence-transformers, all-MiniLM-L6-v2, 384 dims) — AI to align their implementation
@@ -63,3 +65,5 @@ Disclosure-by-absence: `{ disclosure_id: string, disclosure_type: string, presen
 
 ## Notes
 This pipeline is designed to be invoked as a script/job when a document is submitted, not run as a long-lived service.
+
+The `document_id` field in precedent search is currently a placeholder — will be updated once Backend's document metadata format is available.
