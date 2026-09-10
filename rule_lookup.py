@@ -13,10 +13,8 @@ def find_matching_rules(chunk_text, top_n=3):
     chunk_embedding = model.encode(chunk_text)
 
     # Step 2: Connect to the database
-    conn = psycopg2.connect(
-        host="localhost", port=5432,
-        dbname="compliance_review", user="compliance", password="compliance"
-    )
+    from db import get_connection
+    conn = get_connection()
     cursor = conn.cursor()
 
     # Step 3: Find the closest matching rules using vector distance

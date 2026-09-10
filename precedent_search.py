@@ -11,10 +11,8 @@ def find_precedents(query_text, top_n=3):
     """
     query_embedding = model.encode(query_text)
 
-    conn = psycopg2.connect(
-        host="localhost", port=5432,
-        dbname="compliance_review", user="compliance", password="compliance"
-    )
+    from db import get_connection
+    conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute(
