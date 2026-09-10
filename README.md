@@ -33,6 +33,9 @@ This repo handles the Data Engineering side of the app:
 - `disclosure_check.py` — checks whether a required disclosure is present or missing in a document's chunks
 - `precedent_search.py` — finds the most similar previously-reviewed chunks for a given query
 - `api_server.py` — FastAPI wrapper exposing rule lookup, disclosure check, and precedent search as HTTP endpoints
+- `db.py` — shared database connection helper, reads from DATABASE_URL env var
+- `seed_document_chunks.py` — seeds document_chunks with generic sample data (no personal files needed)
+- `retrieve_document.py` — retrieves the original uploaded file from Backend's internal endpoint (GET /api/v1/documents/{document_id}/file)
 
 ## How to run
 pip install python-docx pdfplumber openpyxl sentence-transformers psycopg2-binary fastapi uvicorn
@@ -75,11 +78,13 @@ Disclosure-by-absence: `{ disclosure_id: string, disclosure_type: string, presen
 Precedent match: `{ document_id: string, chunk_id: string, similarity_score: float, chunk_text: string }`
 
 ## Dependencies (waiting on)
-- AI team: embedding model confirmed (sentence-transformers, all-MiniLM-L6-v2, 384 dims) — AI to align their implementation
-- Backend: file-access endpoint built (GET /documents/{document_id}/file) — auth method (API key) suggested, pending final confirmation
+- AI team: embedding model confirmed (sentence-transformers, all-MiniLM-L6-v2, 384 dims) — AI integrating against my API endpoints
+- Backend: endpoint confirmed (GET /api/v1/documents/{document_id}/file, auth via INTERNAL_SERVICE_TOKEN) — have real token and test document_id, but need a reachable URL (Backend currently only runs on Petros's local machine)
 - DevOps: pgvector/Postgres access confirmed and working
 
 ## Notes
 This pipeline is designed to be invoked as a script/job when a document is submitted, not run as a long-lived service.
 
 The `document_id` field in precedent search is currently a placeholder — will be updated once Backend's document metadata format is available.
+
+Database connection now reads from DATABASE_URL env var (see .env.example) instead of hardcoded credentials.
