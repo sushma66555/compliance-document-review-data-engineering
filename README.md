@@ -23,7 +23,8 @@ This repo handles the Data Engineering side of the app:
 - `extract_text.py` — extracts text from DOCX files
 - `extract_pdf.py` — extracts text from PDF files
 - `extract_xlsx.py` — extracts text from XLSX files
-- `chunk_text.py` — splits extracted text into overlapping chunks
+- `chunk_text.py` — splits extracted text into
+ overlapping chunks
 - `embed_text.py` — quick test script for generating embeddings
 - `store_embeddings.py` — full pipeline: extract, chunk, embed, and insert into Postgres (document_chunks table)
 - `seed_rules.py` — seeds the rules table with sample compliance rules and their embeddings
@@ -31,15 +32,30 @@ This repo handles the Data Engineering side of the app:
 - `test_rule_lookup.py` — standalone test for the similarity search query
 - `disclosure_check.py` — checks whether a required disclosure is present or missing in a document's chunks
 - `precedent_search.py` — finds the most similar previously-reviewed chunks for a given query
+- `api_server.py` — FastAPI wrapper exposing rule lookup, disclosure check, and precedent search as HTTP endpoints
 
 ## How to run
-```
-pip install python-docx pdfplumber openpyxl sentence-transformers psycopg2-binary
+pip install python-docx pdfplumber openpyxl sentence-transformers psycopg2-binary fastapi uvicorn
 python store_embeddings.py
 python seed_rules.py
-python rule_lookup.py
-```
-Requires the platform repo's Postgres + pgvector database running (see compliance-document-review-platform).
+python api_server.py
+Or run the API server directly:
+python -m uvicorn api_server:app --reload --port 5000
+Then visit http://localhost:5000/docs for interactive API testing.
+
+## API Endpoints
+
+POST /rule-lookup
+- Request: `{ "text": "..." }`
+- Response: `[{ rule_id, rule_text, similarity_score }, ...]`
+
+POST /disclosure-check
+- Request: `{ "document_chunks": ["..."], "disclosure_id": "...", "disclosure_text": "..." }`
+- Response: `{ disclosure_id, disclosure_type, present, similarity_score, matched_chunk_id }`
+
+POST /precedent-search
+- Request: `{ "text": "..." }`
+- Response: `[{ document_id, chunk_id, similarity_score, chunk_text }, ...]`
 
 ## Database schema
 `document_chunks` table:
