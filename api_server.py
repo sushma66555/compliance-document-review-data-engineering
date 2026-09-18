@@ -1,3 +1,6 @@
+from retrieve_document import retrieve_document_file
+from extract_from_bytes import extract_text_from_bytes
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 
@@ -33,3 +36,9 @@ def disclosure_check_endpoint(query: DisclosureQuery):
 @app.post("/precedent-search")
 def precedent_search_endpoint(query: TextQuery):
     return find_precedents(query.text)
+
+@app.get("/documents/{document_id}/extracted-text")
+def get_extracted_text(document_id: int):
+    file_bytes, content_type = retrieve_document_file(document_id)
+    text = extract_text_from_bytes(file_bytes, content_type)
+    return {"document_id": document_id, "extracted_text": text}
