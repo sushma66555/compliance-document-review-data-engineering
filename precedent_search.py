@@ -1,7 +1,8 @@
-from sentence_transformers import SentenceTransformer
 import psycopg2
+from shared_model import get_shared_model
 
-model = SentenceTransformer('all-MiniLM-L6-v2')
+# Reuse shared embedding model instance
+model = get_shared_model()
 
 def find_precedents(query_text, top_n=3):
     """
